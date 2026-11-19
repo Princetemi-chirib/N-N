@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id           Int       @id @default(autoincrement())
+  fullName     String
+  email        String?
+  phoneNumber  String?
+  gender       String?
+  dateOfBirth  DateTime? @db.Date
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  measurement  Measurement?
+  transactions Transaction[]
+
+  @@map("clients")
+}
+
+model Measurement {
+  id            Int      @id @default(autoincrement())
+  clientId      Int      @unique
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  headSize      String?
+  agbadaShoulder String?
+  agbadaLength  String?
+  shoulder      String?
+  chest         String?
+  neck          String?
+  armHole       String?
+  roundSleeve   String?
+  sleeveLength  String?
+  foreArm       String?
+  clothLength   String?
+  tommy         String?
+  lapThigh      String?
+  calf          String?
+  trouserBase   String?
+  cuffWrist     String?
+  waist         String?
+  knee          String?
+  trouserLength String?
+  customerNote  String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("measurements")
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  clientId    Int
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  description String?
+  amount      Decimal  @db.Decimal(12, 2)
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("transactions")
+}
